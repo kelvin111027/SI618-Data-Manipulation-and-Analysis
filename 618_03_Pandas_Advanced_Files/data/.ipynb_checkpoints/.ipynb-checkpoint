@@ -1,0 +1,455 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "# SI 618: Data Manipulation and Analysis\n",
+    "## 03 - Advanced pandas\n",
+    "### Dr. Chris Teplovs, School of Information, University of Michigan\n",
+    "<small><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png\" /></a> This work is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "### IMPORTANT: Replace ```?``` in the following code with your uniqname."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "MY_UNIQNAME = 'kaikang'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Before we start...\n",
+    "## <font color=\"magenta\">Q0: (2 point) Please let us know what you found confusing in the last class. </font>\n",
+    "We'll try to take time in the next class to review these concepts next class."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Loading and manipulating data in pandas"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Learning Objectives\n",
+    "* load CSV files\n",
+    "* load JSON files\n",
+    "* use pd.read_html to extract tables from web pages\n",
+    "* load data from simple APIs \n",
+    "* load data from a SQL database\n",
+    "* handle missing data (dropna and fillna)\n",
+    "* use vectorized string functions\n",
+    "* Pandas refresher (or introduction)\n",
+    "* explain how pandas operations differ from \"traditional\" python\n",
+    "* be able to load a CSV file into a Pandas DataFrame\n",
+    "* explain how to extract columns from a DataFrame\n",
+    "* sort a DataFrame\n",
+    "* assign a column as the index of a DataFrame\n",
+    "* filter a DataFrame according to some criteria\n",
+    "* explain how boolean masks work in filtering DataFrames"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Recall the ```pd.read_csv``` function that we used to load data sets in previous classes:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "menu = pd.read_csv('data/menu.csv') "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "That works great for well-formatted CSV files, but what happens when you get something that looks like the ```data/avocado_eu.csv``` file.\n",
+    "Go ahead and browse that in JupyterLab's CSV browser.\n",
+    "\n",
+    "You'll notice a new drop-down menu labelled \"Delimiter\".  Go ahead and change that to ```;```.\n",
+    "\n",
+    "Referring back to your readings and the [read_csv documentation online](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html), complete the following exercise\n",
+    "\n",
+    "\n",
+    "Read the data/avocado_eu.csv file into a pandas DataFrame and show the first 5 rows.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "avocado = pd.read_csv('data/avocado_eu.csv', delimiter=';')\n",
+    "avocado.head(5)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You'll notice that, unless you did something special in the previous read_csv invocation, the decimal points don't look quite right.  Go ahead and find the right option to convert commas to periods when loading a CSV file.\n",
+    "\n",
+    "## <font color=\"magenta\">Q1 (2 point): \n",
+    "Read the data/avocado_eu.csv file using the correct delimiter and decimal character into a dataframe and show the first 5 rows: </font>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Insert your code here"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Counting the number of values\n",
+    "\n",
+    "Sometimes, you'll want to count the number of times values occur.  For example, we might want to know the number of times each 'type'\n",
+    "is reported in our avocado data.  Use the ```value_counts()``` function on a Series to do so:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "avocado['type'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Loading JSON data\n",
+    "\n",
+    "In addition to CSV files, JSON (JavaScript Object Notation) files or data is commonly used.  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players = pd.read_json('data/nfl_football_profiles.json')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "And, just for fun, show the player with the highest Current Salary from that dataset:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players.sort_values('current_salary', ascending=False).head(1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Fixing up the data\n",
+    "Assuming you did something like sort_values on one of the original columns, you probably got the wrong result.\n",
+    "\n",
+    "Looking a bit more closely at the results, you'll notice that the current_salary column.  Remembering that we have made the shift from pythonic to pandorable, we can leverage the impressive-sounding \"vectorized string functions\" mentioned in Section 7.3 of the McKinney book.  Specifically, we can use the str.replace(...) method.  Note that had we use read_csv to load the file we could have used the ```thousands=``` option and avoided all this, but sometimes data doesn't come in a convenient format.\n",
+    "\n",
+    "One way to apply functions is to operate on a column and then assign the results to another column.  For example, if we wanted to eliminate commas, we could replace them with null strings"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players['current_salary'].str.replace(',', '')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "And assign the results to a column in the original dataframe (in this case I'm calling the column current_salary_nocommas). We need to assign it to a column to ensure the operation is done in-place."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players['current_salary_nocommas'] = nfl_football_players['current_salary'].str.replace(',', '')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "But you'll notice that the type of the column is string, and we want to convert it to a float so we can sort it numerically.  So we can use the astype() function to convert it:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players['current_salary_cleaned'] = nfl_football_players['current_salary_nocommas'].astype(float)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players.head(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "And now we can re-run our command to sort by salary and get the correct result:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players.sort_values('current_salary_cleaned', ascending=False).head(1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Dropping missing values\n",
+    "\n",
+    "In addition to the \"all\" or \"any\" functionality described in McKinney section 7.1, it's sometimes useful to drop a row only if a certain column or columns have missing data.  To do this, use the subset= option with dropna().  So, for example, to drop all players for whom we do not have salary information, we could use the following code:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players.current_salary_cleaned.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players_salaries = nfl_football_players.dropna(subset=['current_salary_cleaned'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_football_players_salaries.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Creating dummy variables\n",
+    "\n",
+    "We might, on occasion, want to \"bin\" or \"discretize\" a variable.  For example, we might want to take the previous dataframe and add dummy variables that map onto whether the salaries are \"small\" (< \\\\$1M) , \"medium\" (\\\\$1M - \\\\$10M), or \"large\" (> \\\\$10M). A **dummy variable** is a binary indicator variable (often used in regressions) to represent a categorical variable. We could do something like the following:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "bins = [0,1000000,10000000,1000000000]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "pd.cut(nfl_football_players_salaries['current_salary_cleaned'],bins,labels=['small','medium','large'])[0:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dummies = pd.get_dummies(pd.cut(nfl_football_players_salaries['current_salary_cleaned'],bins,labels=['small','medium','large']))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dummies.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "pd.concat stacks together objects along an axis _(Section 8.2 McKinney)_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_cats = pd.concat([nfl_football_players_salaries,dummies],axis=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nfl_cats.tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Scraping Tables from HTML"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The ```pd.read_html``` function returns a list of DataFrames read from an HTML source.  The following line will return a list of DataFrames from https://en.wikipedia.org/wiki/List_of_largest_sports_contracts"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "contracts_scraped = pd.read_html('https://en.wikipedia.org/wiki/List_of_largest_sports_contracts',header=0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "len(contracts_scraped)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "To get the first table, you'll need to pull off the 0th element:"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
